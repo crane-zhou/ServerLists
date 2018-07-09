@@ -1,0 +1,230 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Index</title>
+    <link rel="stylesheet" type="text/css" href="/static/css/semantic.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/bootstrap.css">
+    <script src="/static/js/jquery-3.3.1.js"></script>
+    <script src="/static/js/semantic.js"></script>
+    <script src="/static/js/bootstrap.js"></script>
+</head>
+<body>
+
+  <div class="ui form">
+     <div class="five fields">
+        <div class="field">
+            <label>平台类型:</label>
+            <select class="ui fluid dropdown platform_id" id="select-first">
+                <option value="">平台</option>
+                {% for platform in platforms %}
+                <option value="{{ platform.id }}">{{ platform.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="field">
+            <label>设备规模：</label>
+            <select class="ui fluid dropdown device_id" id="select-second" style="display: none">
+{#                <option value="">设备</option>#}
+{#                {% for device in devices %}#}
+{#                <option value="{{ device.id }}">{{ device.name }}</option>#}
+{#                {% endfor %}#}
+            </select>
+        </div>
+
+        <div class="field">
+            <label>实时查询日期范围：</label>
+            <select class="ui fluid dropdown realtime_id" id="select-third" style="display: none">
+{#                <option value="">实时</option>#}
+{#                {% for realtime in realtimes %}#}
+{#                <option value="{{ realtime.id }}">{{ realtime.name }}</option>#}
+{#                {% endfor %}#}
+            </select>
+        </div>
+
+        <div class="field">
+            <label>离线查询日期范围：</label>
+            <select class="ui fluid dropdown offline_id" id="select-fourth" style="display: none">
+{#                <option value="">离线</option>#}
+{#                {% for offline in offlines %}#}
+{#                <option value="{{ offline.id }}">{{ offline.name }}</option>#}
+{#                {% endfor %}#}
+            </select>
+        </div>
+
+        <div class="field">
+            <label>&nbsp</label>
+            <button class="ui blue basic button" type="submit" onclick=calculates()>计算服务器配置清单</button>
+        </div>
+     </div>
+{#    <div class="ui modal">#}
+{#      <div class="header">Header</div>#}
+{#      <div class="content">#}
+{#            <p></p>#}
+{#            <p></p>#}
+{#            <p></p>#}
+{#      </div>#}
+{#    </div>#}
+
+  </div>
+
+  <div class="ui equal width grid">
+
+      <div class="sixteen wide column" id="servertop">
+      </div>
+
+      <div class="one wide column">
+        <div class="ui segment">
+          序号
+        </div>
+      </div>
+      <div class="three wide column">
+        <div class="ui segment">
+          服务器服务名称
+        </div>
+      </div>
+      <div class="three wide column">
+        <div class="ui segment">
+          服务器清单名称
+        </div>
+      </div>
+      <div class="nine wide column" id="serverlist">
+        <div class="ui segment">
+          服务器具体配置
+        </div>
+      </div>
+
+  </div>
+
+    <script>
+         $("#select-first").change(function(){
+             $("#select-second").empty();
+             $("#select-third").empty();
+             $("#select-fourth").empty();
+
+             var platform_id=$(".platform_id option:selected").val();
+             var data_ids = "platform_id=" + platform_id;
+
+             $.ajax({
+               type: "GET",
+               url: "/servers/menulists",
+               data: data_ids,
+               success: function(msg){
+                   result = JSON.parse(msg);
+{#                   console.log(result);#}
+                   var str = '<option value="">设备</option>';
+                   $.each(result,function(index,item) {
+{#                       console.log(index,item);#}
+                       str = str + '<option value="' + index + '">' + item + '</option>';
+                   })
+
+                   $('#select-second').append(str);
+               }
+             });
+             $("#select-second").removeAttr('style');
+         });
+
+         $("#select-second").change(function(){
+             $("#select-third").empty();
+             $("#select-fourth").empty();
+
+             var device_id=$(".device_id option:selected").val();
+             var data_ids = "device_id=" + device_id;
+
+             $.ajax({
+               type: "GET",
+               url: "/servers/menulists",
+               data: data_ids,
+               success: function(msg){
+                   result = JSON.parse(msg);
+{#                   console.log(result);#}
+                   var str = '<option value="">实时</option>';
+                   $.each(result,function(index,item) {
+{#                       console.log(index,item);#}
+                       str = str + '<option value="' + index + '">' + item + '</option>';
+                   })
+
+                   $('#select-third').append(str);
+               }
+             });
+             $("#select-third").removeAttr('style');
+         });
+
+         $("#select-third").change(function(){
+             $("#select-fourth").empty();
+
+             var realtime_id=$(".realtime_id option:selected").val();
+             var data_ids = "realtime_id=" + realtime_id;
+
+             $.ajax({
+               type: "GET",
+               url: "/servers/menulists",
+               data: data_ids,
+               success: function(msg){
+                   result = JSON.parse(msg);
+                   console.log(result);
+                   var str = '<option value="">离线</option>';
+                   $.each(result,function(index,item) {
+                       console.log(index,item);
+                       str = str + '<option value="' + item["0"] + '">' + item["1"] + '</option>';
+                   })
+
+                   $('#select-fourth').append(str);
+               }
+             });
+             $("#select-fourth").removeAttr('style');
+         });
+
+        function calculates() {
+            var platform_id=$(".platform_id option:selected").val();
+            var device_id=$(".device_id option:selected").val();
+            var realtime_id=$(".realtime_id option:selected").val();
+            var offline_id=$(".offline_id option:selected").val();
+            var data_ids = "platform_id=" + platform_id + "&device_id=" + device_id + "&realtime_id=" + realtime_id + "&offline_id=" + offline_id
+
+            $(".server").remove();
+            $.ajax({
+               type: "GET",
+               url: "/servers/lists",
+               data: data_ids,
+               success: function(msg){
+{#                   console.log(msg);#}
+                   result = JSON.parse(msg);
+{#                   console.log(result);#}
+
+                   var str = '<div class="ui segment server">' + '总共需要: ' + result.count + " 台服务器, " + result.bandwith + '</div>';
+                   $('#servertop').append(str);
+
+                   $.each(result.configurations,function(index,item) {
+{#                       console.log(index,item);#}
+                       var str1 = '<div class="one wide column server"> <div class="ui segment">' + item.id + '</div></div>';
+                       var str2 = '<div class="three wide column server"> <div class="ui segment">' + item.servername + '</div></div>';
+                       var str3 = '<div class="three wide column server"> <div class="ui segment">' + item.count + " * " + item.name + '</div></div>';
+                       var str4 = '<div class="nine wide column server"> <div class="ui segment">' + item.cpu + "<br>" + item.memory + "<br>" + item.raidcard + "<br>" + item.disk1 + "<br>" + item.disk2 + "<br>" + item.default + '</div></div>';
+                       $('#serverlist').after(str1 + str2 + str3 + str4);
+                   })
+{#                   $.each(result,function(index,item){#}
+{#                        console.log(index + ":" + item)#}
+{#                        var item = item.configurations;#}
+{#                        var str = '<div class="one wide column"> <div class="ui segment">' + item.id + '</div></div>';#}
+{#                        $('#test').after(str);#}
+{#                        $.each(item.list,function(j){#}
+{#                            var temp = "<a href='" + item.list[j].link +"'>" + item.list[j].name +" </a><br/>";#}
+{#                            $('#container').append(temp);#}
+{#                        });#}
+{#                        $('#container').append("<hr/>");#}
+{#                    })#}
+{#                    alert( "Data Saved: " + msg );#}
+
+               }
+            });
+
+{#            $('.ui.modal')#}
+{#            .modal('show')#}
+{#            ;#}
+        }
+    </script>
+</body>
+</html>
