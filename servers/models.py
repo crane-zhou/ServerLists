@@ -67,7 +67,7 @@ class configuration_lists(models.Model):
     device = models.ForeignKey('base_types',related_name="device",)
     realtime = models.ForeignKey('base_types',related_name="realtime",)
     offline = models.ForeignKey('base_types',related_name="offline",)
-    service = models.ForeignKey('base_types',related_name="service",)
+    service = models.ManyToManyField('base_types',related_name="service",)
     configuration = models.ManyToManyField('configurations')
     bandwith = models.ForeignKey('hardware_accessories')
     order = models.SmallIntegerField(default=0)

@@ -30,6 +30,10 @@ def lists(request):
     configuration_lists_id_object = configuration_lists.objects.get(platform_id=platform_id,device_id=device_id,realtime_id=realtime_id,offline_id=offline_id)
     #print(configuration_lists_id_object)
 
+    servernames = []
+    for servername in configuration_lists_id_object.service.all().filter(status=1):
+        servernames.append(servername.name)
+
     data = {'platform_id':platform_id,
             'device_id':device_id,
             'realtime_id':realtime_id,
@@ -37,11 +41,14 @@ def lists(request):
             'configuration_lists_id':configuration_lists_id_object.id,
             'count':configuration_lists_id_object.count,
             'bandwith':configuration_lists_id_object.bandwith.name,
+            'servername': servernames,
             'configurations': [],
             }
 
     serverlists = configuration_lists_id_object.configuration.all().filter(status=1).order_by("-id")
     #print(serverlists)
+
+
 
     for server in serverlists:
         #print(server)
@@ -52,7 +59,6 @@ def lists(request):
         data['configurations'].append({'id':server.id,
                                  'name':server.name,
                                  'count':server.count.name,
-                                 'servername':configuration_lists_id_object.service.name,
                                  'motherboard': hardware_accessories.objects.get(id=server.motherboard_id).name,
                                  'cpu': hardware_accessories.objects.get(id=server.cpu_id).name,
                                  'memory': hardware_accessories.objects.get(id=server.memory_id).name,

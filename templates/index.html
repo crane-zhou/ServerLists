@@ -80,17 +80,12 @@
           序号
         </div>
       </div>
-      <div class="three wide column">
-        <div class="ui segment">
-          服务器服务名称
-        </div>
-      </div>
-      <div class="three wide column">
+      <div class="five wide column">
         <div class="ui segment">
           服务器清单名称
         </div>
       </div>
-      <div class="nine wide column" id="serverlist">
+      <div class="ten wide column" id="serverlist">
         <div class="ui segment">
           服务器具体配置
         </div>
@@ -194,16 +189,16 @@
                    result = JSON.parse(msg);
 {#                   console.log(result);#}
 
-                   var str = '<div class="ui segment server">' + '总共需要: ' + result.count + " 台服务器, " + result.bandwith + '</div>';
+                   var str = '<div class="ui segment server">' + '总共需要: ' + result.count + ' 台服务器, ' + result.bandwith + '<br>所需各种服务: ' + result.servername + '</div>';
                    $('#servertop').append(str);
 
                    $.each(result.configurations,function(index,item) {
-{#                       console.log(index,item);#}
-                       var str1 = '<div class="one wide column server"> <div class="ui segment">' + item.id + '</div></div>';
-                       var str2 = '<div class="three wide column server"> <div class="ui segment">' + item.servername + '</div></div>';
-                       var str3 = '<div class="three wide column server"> <div class="ui segment">' + item.count + " * " + item.name + '</div></div>';
-                       var str4 = '<div class="nine wide column server"> <div class="ui segment">' + item.cpu + "<br>" + item.memory + "<br>" + item.raidcard + "<br>" + item.disk1 + "<br>" + item.disk2 + "<br>" + item.default + '</div></div>';
-                       $('#serverlist').after(str1 + str2 + str3 + str4);
+                       console.log(index,item);
+                       var number = index + 1
+                       var str1 = '<div class="one wide column server"> <div class="ui segment">' + number + '</div></div>';
+                       var str2 = '<div class="five wide column server"> <div class="ui segment">' + item.count + " * <br>" + item.name + '</div></div>';
+                       var str3 = '<div class="ten wide column server"> <div class="ui segment">' + item.cpu + "<br>" + item.memory + "<br>" + item.raidcard + "<br>" + item.disk1 + "<br>" + item.disk2 + "<br>" + item.default + '</div></div>';
+                       $('#serverlist').after(str1 + str2 + str3);
                    })
 {#                   $.each(result,function(index,item){#}
 {#                        console.log(index + ":" + item)#}

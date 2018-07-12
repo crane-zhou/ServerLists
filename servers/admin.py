@@ -15,7 +15,7 @@ class BaseTypesAdmin(admin.ModelAdmin):
 @admin.register(configuration_lists)
 class ConfigurationListsAdmin(admin.ModelAdmin):
     fields = ('name', 'count', 'platform', 'device', 'realtime', 'offline', 'service', 'configuration', 'bandwith', 'order', 'status', 'comment')
-    list_display = ('name', 'count', 'platform', 'device', 'realtime', 'offline', 'service', 'bandwith', 'order', 'status', 'comment')
+    list_display = ('name', 'count', 'platform', 'device', 'realtime', 'offline', 'bandwith', 'order', 'status', 'comment')
 
 
 @admin.register(configurations)
